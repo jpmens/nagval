@@ -30,8 +30,8 @@ DNSSEC-Tools project to send a query to a validating resolver,
 evaluating the results returned in the answer. For example, If I
 check a domain using a BIND validating resolver
 
-        $ nagval jpmens.org SOA
-    jpmens.org/SOA
+    $ nagval jpmens.org SOA
+    jpmens.org/SOA: SUCCESS
 
 I see the following in BIND's log
 
