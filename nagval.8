@@ -1,0 +1,70 @@
+.TH NAGVAL 8 "April 4, 2011" "User Manuals"
+.SH NAME
+.PP
+nagval - Nagios/Icinga plugin to check validity of one or more
+DNSSEC domains
+.SH SYNOPSIS
+.PP
+nagval [-f \f[I]file\f[]] [\f[I]domain\f[] \f[I]rr\f[]]
+.SH DESCRIPTION
+.PP
+\f[I]nagval\f[] (i\.e\. "Nagios Validator") is a Nagios/Icinga
+plugin to check the validity of a DNSSEC-signed zone over the DNS\.
+.PP
+Typical use of \f[I]nagval\f[] as a Nagios plugin is to specify a
+single \f[I]domain\f[] and \f[I]resource record type\f[]\.
+Optionally, a list of domains can be provided in a file\.
+.SH OPTIONS
+.PP
+\f[I]nagval\f[] understands the following options\.
+.TP
+.B -f \f[I]file\f[]
+Specify a file containing a list of domains to check\. The file
+must contain a list of domains, one per line, where each domain is
+optionally followed by a slash (/) and a DNS resource record type
+to check\. The type defaults to \f[I]SOA\f[] if it is not
+specified\.
+.RS
+.RE
+.PP
+Example:
+.PP
+\f[CR]
+      $\ cat\ domains
+      google\.com/A
+      orange\.kame\.net/AAAA
+      ip\.jpmens\.org/a
+      infoblox\.com/NS
+      jasadvisors\.com/DNSKEY
+      verisignlabs\.com
+      chainzombies\.com/A
+      sanibar\.com
+      ibadancer\.com
+      wnagele\.com/A
+      b\.aa/soa
+\f[]
+.SH BUGS
+.PP
+Yes\.
+.SH RETURN CODES
+.PP
+\f[I]nagval\f[] exits with a code 0, 1, or 2 indicating a status of
+OK, WARNING, or CRITICAL\. Currently, if a domain does not validate
+a status CRITICAL is issued, else OK\.
+.SH AVAILABILITY
+.PP
+<http://github.com/jpmens/nagval>
+.SH CREDITS
+.IP \[bu] 2
+This program requires \f[I]dnsval\f[], a library provided by the
+DNSSEC-tools project <https://www.dnssec-tools.org/>
+.SH SEE ALSO
+.IP \[bu] 2
+\f[B]resolver\f[](5)\.
+.IP \[bu] 2
+<http://tools.ietf.org/html/draft-hayatnagarkar-dnsext-validator-api-07>
+.SH AUTHOR
+.PP
+Jan-Piet Mens <http://mens.de>
+.SH AUTHOR
+Jan-Piet Mens
