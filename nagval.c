@@ -92,7 +92,7 @@ u_int16_t fixtype(char *type_s)
 
 void usage(char *prog)
 {
-	fprintf(stderr, "Usage: %s [-f file] [domain type]\n", prog);
+	fprintf(stderr, "Usage: %s [-v] [-f file] [domain type]\n", prog);
 	exit(STATUS_UNKNOWN);
 }
 
@@ -100,15 +100,18 @@ int main(int argc, char *argv[])
 {
 	char *domain, *type_s, *infile = NULL, *progname = *argv;
 	u_int16_t type = ns_t_a;
-	int c, ret, rc = STATUS_WARN;
+	int c, ret, verbose = 0, rc = STATUS_WARN;
 	val_context_t *ctx;
 	val_status_t status;
 	FILE *fp;
 
-	while ((c = getopt(argc, argv, "f:")) != EOF) {
+	while ((c = getopt(argc, argv, "f:v")) != EOF) {
 		switch (c) {
 			case 'f':
 				infile = strdup(optarg);
+				break;
+			case 'v':
+				verbose++;
 				break;
 			default:
 				usage(progname);
@@ -156,11 +159,16 @@ int main(int argc, char *argv[])
 		rc = (status == VAL_SUCCESS) ? STATUS_OK : STATUS_CRIT;
 	} else {
 		char buf[BUFLEN];
+		unsigned long domains_count = 0L;
+		unsigned long validated = 0L, warnings = 0L;
 
 		if ((fp = fopen(infile, "r")) == NULL) {
 			perror(infile);
 			exit(STATUS_UNKNOWN);
 		}
+		
+		rc = STATUS_OK;
+
 		while (fgets(buf, BUFLEN - 1, fp) != NULL) {
 			if (buf[strlen(buf) - 1] == '\n')
 				buf[strlen(buf) - 1] = 0;
@@ -183,15 +191,27 @@ int main(int argc, char *argv[])
 				exit(STATUS_UNKNOWN);
 			}
 
-			printf("%s/%s: %s\n", 
-				domain,
-				type_s,
-				p_val_status(status) + strlen("VAL_"));
+			++domains_count;
+			if (verbose) {
+				printf("%s/%s: %s\n", 
+					domain,
+					type_s,
+					p_val_status(status) + strlen("VAL_"));
+			}
 
+			if (status != VAL_SUCCESS) {
+				rc = STATUS_WARN;
+				warnings++;
+			} else {
+				validated++;
+			}
 			free(type_s);
 
 		}
 		fclose(fp);
+
+		printf("%ld domains checked: %ld valid, %ld warnings\n",
+			domains_count, validated, warnings);
 	}
 	return (rc);
 }

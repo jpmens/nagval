@@ -54,6 +54,8 @@ Checking Disabled (CD).
     must contain a list of domains, one per line, where each domain is
     optionally followed by a slash (/) and a DNS resource record type
     to check. The type defaults to *SOA* if it is not specified.
+-v
+:   Verbose. Use with *-f* for verbose output.
 
 Example:
 
@@ -69,6 +71,20 @@ Example:
     ibadancer.com
     wnagele.com/A
     b.aa/soa
+    
+    $ nagval -v -f domains
+    google.com/A: PINSECURE
+    orange.kame.net/AAAA: PINSECURE
+    ip.jpmens.org/A: SUCCESS
+    infoblox.com/NS: SUCCESS
+    jasadvisors.com/DNSKEY: SUCCESS
+    verisignlabs.com/SOA: SUCCESS
+    chainzombies.com/A: SUCCESS
+    sanibar.com/SOA: SUCCESS
+    ibadancer.com/SOA: SUCCESS
+    wnagele.com/A: SUCCESS
+    b.aa/SOA: UNTRUSTED_ANSWER
+    11 domains checked: 8 valid, 3 warnings
 
 # BUGS
 
