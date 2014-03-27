@@ -40,6 +40,7 @@
 #include <netinet/in.h>
 #include <getopt.h>
 #include <resolv.h>
+#include <string.h>
 
 #include <arpa/nameser.h>
 #include <validator/resolver.h>
@@ -54,11 +55,11 @@
 #define STATUS_CRIT	2
 #define STATUS_UNKNOWN	3
 
-#define BUFLEN		512
+#define BUFLEN		1024
 
 int query(val_context_t *ctx, char *domain, u_int16_t type, val_status_t *status)
 {
-	int ret, flags = VAL_QUERY_NO_AC_DETAIL;
+	int ret, flags = 0; // VAL_QUERY_NO_AC_DETAIL;
 #if 0
 	struct val_result_chain *results, *vc;
 

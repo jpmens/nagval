@@ -1,4 +1,5 @@
-CFLAGS=-g -Wall
+CC=gcc
+CFLAGS= -Wall -Werror
 
 all: nagval nagval.8 README.md
 
@@ -6,7 +7,7 @@ txt: txt.c
 	$(CC) $(CFLAGS) txt.c -o txt -lval-threads -lsres -lcrypto
 
 nagval: nagval.c
-	$(CC) $(CFLAGS) nagval.c -o nagval -lval-threads -lsres -lcrypto
+	$(CC) $(CFLAGS) nagval.c -o nagval -lval-threads -lsres -lcrypto -lssl
 
 nagval.8: nagval.pandoc
 	pandoc -s -w man nagval.pandoc -o nagval.8

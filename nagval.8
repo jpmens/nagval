@@ -1,109 +1,119 @@
 .TH NAGVAL 8 "April 4, 2011" "User Manuals"
 .SH NAME
 .PP
-nagval - Nagios/Icinga plugin to check validity of one or more
-DNSSEC domains
+nagval - Nagios/Icinga plugin to check validity of one or more DNSSEC
+domains
 .SH SYNOPSIS
 .PP
 nagval [-f \f[I]file\f[]] [\f[I]domain\f[] \f[I]rr\f[]]
 .SH DESCRIPTION
 .PP
-\f[I]nagval\f[] (i\.e\. "Nagios Validator") is a Nagios/Icinga
-plugin to check the validity of a DNSSEC-signed zone over the DNS\.
+\f[I]nagval\f[] (i.e.
+"Nagios Validator") is a Nagios/Icinga plugin to check the validity of a
+DNSSEC-signed zone over the DNS.
 .PP
-Typical use of \f[I]nagval\f[] as a Nagios plugin is to specify a
-single \f[I]domain\f[] and \f[I]resource record type\f[]\.
-Optionally, a list of domains can be provided in a file\.
+Typical use of \f[I]nagval\f[] as a Nagios plugin is to specify a single
+\f[I]domain\f[] and \f[I]resource record type\f[].
+Optionally, a list of domains can be provided in a file.
 .SH MOTIVATION
 .PP
-Why another DNSSEC validator? There are lots of those around
-already! Yes, there are (see below)\. Most of them retrieve an
-RRSIG and perform date arithmetic on the expiration times\. Based
-on an idea I read in a paper by Stéphane Bortzmeyer, I decided to
-have a validating resolving DNS server do the brunt of the
-validation work -- after all, that\[aq]s what it\[aq]s supposed to
-be good at, right?
+Why another DNSSEC validator?
+There are lots of those around already! Yes, there are (see below).
+Most of them retrieve an RRSIG and perform date arithmetic on the
+expiration times.
+Based on an idea I read in a paper by Stephane Bortzmeyer, I decided to
+have a validating resolving DNS server do the brunt of the validation
+work -- after all, that\[aq]s what it\[aq]s supposed to be good at,
+right?
 .PP
-That is what \f[I]nagval\f[] does\. It used the \f[I]dnsval\f[]
-library from the DNSSEC-Tools project to send a query to a
-validating resolver, evaluating the results returned in the
-answer\. For example, If I check a domain using a BIND validating
-resolver
-.PP
-\f[CR]
-      $\ nagval\ jpmens\.org\ SOA
-      jpmens\.org/SOA:\ SUCCESS
+That is what \f[I]nagval\f[] does.
+It uses the \f[I]dnsval\f[] library from the DNSSEC-Tools project to
+send a query to a validating resolver, evaluating the results returned
+in the answer.
+For example, If I check a domain using a BIND validating resolver
+.IP
+.nf
+\f[C]
+$\ nagval\ jpmens.org\ SOA
+jpmens.org/SOA:\ SUCCESS
 \f[]
+.fi
 .PP
 I see the following in BIND\[aq]s log
-.PP
-\f[CR]
-      query:\ jpmens\.org\ IN\ SOA\ +EDC\ (127\.0\.0\.1)
-      query:\ jpmens\.org\ IN\ DNSKEY\ +EDC\ (127\.0\.0\.1)
-      query:\ jpmens\.org\ IN\ DS\ +EDC\ (127\.0\.0\.1)
-      query:\ org\ IN\ DNSKEY\ +EDC\ (127\.0\.0\.1)
-      query:\ org\ IN\ DS\ +EDC\ (127\.0\.0\.1)
-      query:\ \.\ IN\ DNSKEY\ +EDC\ (127\.0\.0\.1)
+.IP
+.nf
+\f[C]
+query:\ jpmens.org\ IN\ SOA\ +EDC\ (127.0.0.1)
+query:\ jpmens.org\ IN\ DNSKEY\ +EDC\ (127.0.0.1)
+query:\ jpmens.org\ IN\ DS\ +EDC\ (127.0.0.1)
+query:\ org\ IN\ DNSKEY\ +EDC\ (127.0.0.1)
+query:\ org\ IN\ DS\ +EDC\ (127.0.0.1)
+query:\ .\ IN\ DNSKEY\ +EDC\ (127.0.0.1)
 \f[]
+.fi
 .PP
-Note how \f[I]nagval\f[] issued queries with EDNS0 DNSSEC OK (DO)
-and Checking Disabled (CD)\.
+Note how \f[I]nagval\f[] issued queries with EDNS0 DNSSEC OK (DO) and
+Checking Disabled (CD).
 .SH OPTIONS
 .PP
-\f[I]nagval\f[] understands the following options\.
+\f[I]nagval\f[] understands the following options.
 .TP
 .B -f \f[I]file\f[]
-Specify a file containing a list of domains to check\. The file
-must contain a list of domains, one per line, where each domain is
-optionally followed by a slash (/) and a DNS resource record type
-to check\. The type defaults to \f[I]SOA\f[] if it is not
-specified\.
+Specify a file containing a list of domains to check.
+The file must contain a list of domains, one per line, where each domain
+is optionally followed by a slash (/) and a DNS resource record type to
+check.
+The type defaults to \f[I]SOA\f[] if it is not specified.
 .RS
 .RE
 .TP
 .B -v
-Verbose\. Use with \f[I]-f\f[] for verbose output\.
+Verbose.
+Use with \f[I]-f\f[] for verbose output.
 .RS
 .RE
 .PP
 Example:
-.PP
-\f[CR]
-      $\ cat\ domains
-      google\.com/A
-      orange\.kame\.net/AAAA
-      ip\.jpmens\.org/a
-      infoblox\.com/NS
-      jasadvisors\.com/DNSKEY
-      verisignlabs\.com
-      chainzombies\.com/A
-      sanibar\.com
-      ibadancer\.com
-      wnagele\.com/A
-      b\.aa/soa
-      
-      $\ nagval\ -v\ -f\ domains
-      google\.com/A:\ PINSECURE
-      orange\.kame\.net/AAAA:\ PINSECURE
-      ip\.jpmens\.org/A:\ SUCCESS
-      infoblox\.com/NS:\ SUCCESS
-      jasadvisors\.com/DNSKEY:\ SUCCESS
-      verisignlabs\.com/SOA:\ SUCCESS
-      chainzombies\.com/A:\ SUCCESS
-      sanibar\.com/SOA:\ SUCCESS
-      ibadancer\.com/SOA:\ SUCCESS
-      wnagele\.com/A:\ SUCCESS
-      b\.aa/SOA:\ UNTRUSTED_ANSWER
-      11\ domains\ checked:\ 8\ valid,\ 3\ warnings
+.IP
+.nf
+\f[C]
+$\ cat\ domains
+google.com/A
+orange.kame.net/AAAA
+ip.jpmens.org/a
+infoblox.com/NS
+jasadvisors.com/DNSKEY
+verisignlabs.com
+chainzombies.com/A
+sanibar.com
+ibadancer.com
+wnagele.com/A
+b.aa/soa
+
+$\ nagval\ -v\ -f\ domains
+google.com/A:\ PINSECURE
+orange.kame.net/AAAA:\ PINSECURE
+ip.jpmens.org/A:\ SUCCESS
+infoblox.com/NS:\ SUCCESS
+jasadvisors.com/DNSKEY:\ SUCCESS
+verisignlabs.com/SOA:\ SUCCESS
+chainzombies.com/A:\ SUCCESS
+sanibar.com/SOA:\ SUCCESS
+ibadancer.com/SOA:\ SUCCESS
+wnagele.com/A:\ SUCCESS
+b.aa/SOA:\ UNTRUSTED_ANSWER
+11\ domains\ checked:\ 8\ valid,\ 3\ warnings
 \f[]
+.fi
 .SH BUGS
 .PP
-Yes\.
+Yes.
 .SH RETURN CODES
 .PP
-\f[I]nagval\f[] exits with a code 0, 1, or 2 indicating a status of
-OK, WARNING, or CRITICAL\. Currently, if a domain does not validate
-a status CRITICAL is issued, else OK\.
+\f[I]nagval\f[] exits with a code 0, 1, or 2 indicating a status of OK,
+WARNING, or CRITICAL.
+Currently, if a domain does not validate a status CRITICAL is issued,
+else OK.
 .SH AVAILABILITY
 .PP
 <http://github.com/jpmens/nagval>
@@ -113,7 +123,7 @@ This program requires \f[I]dnsval\f[], a library provided by the
 DNSSEC-tools project <https://www.dnssec-tools.org/>
 .SH SEE ALSO
 .IP \[bu] 2
-\f[B]resolver\f[](5)\.
+\f[C]resolver\f[](5).
 .IP \[bu] 2
 <http://tools.ietf.org/html/draft-hayatnagarkar-dnsext-validator-api-07>
 .IP \[bu] 2
@@ -125,5 +135,5 @@ DNSSEC-tools project <https://www.dnssec-tools.org/>
 .SH AUTHOR
 .PP
 Jan-Piet Mens <http://mens.de>
-.SH AUTHOR
-Jan-Piet Mens
+.SH AUTHORS
+Jan-Piet Mens.
