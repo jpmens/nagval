@@ -1,16 +1,16 @@
-.TH NAGVAL 8 "April 4, 2011" "User Manuals"
+.TH "NAGVAL" "8" "April 4, 2011" "User Manuals" ""
 .SH NAME
 .PP
-nagval - Nagios/Icinga plugin to check validity of one or more DNSSEC
+nagval \- Nagios/Icinga plugin to check validity of one or more DNSSEC
 domains
 .SH SYNOPSIS
 .PP
-nagval [-f \f[I]file\f[]] [\f[I]domain\f[] \f[I]rr\f[]]
+nagval [\-f \f[I]file\f[]] [\f[I]domain\f[] \f[I]rr\f[]]
 .SH DESCRIPTION
 .PP
 \f[I]nagval\f[] (i.e.
 "Nagios Validator") is a Nagios/Icinga plugin to check the validity of a
-DNSSEC-signed zone over the DNS.
+DNSSEC\-signed zone over the DNS.
 .PP
 Typical use of \f[I]nagval\f[] as a Nagios plugin is to specify a single
 \f[I]domain\f[] and \f[I]resource record type\f[].
@@ -23,11 +23,11 @@ Most of them retrieve an RRSIG and perform date arithmetic on the
 expiration times.
 Based on an idea I read in a paper by Stephane Bortzmeyer, I decided to
 have a validating resolving DNS server do the brunt of the validation
-work -- after all, that\[aq]s what it\[aq]s supposed to be good at,
+work \-\- after all, that\[aq]s what it\[aq]s supposed to be good at,
 right?
 .PP
 That is what \f[I]nagval\f[] does.
-It uses the \f[I]dnsval\f[] library from the DNSSEC-Tools project to
+It uses the \f[I]dnsval\f[] library from the DNSSEC\-Tools project to
 send a query to a validating resolver, evaluating the results returned
 in the answer.
 For example, If I check a domain using a BIND validating resolver
@@ -58,7 +58,7 @@ Checking Disabled (CD).
 .PP
 \f[I]nagval\f[] understands the following options.
 .TP
-.B -f \f[I]file\f[]
+.B \-f \f[I]file\f[]
 Specify a file containing a list of domains to check.
 The file must contain a list of domains, one per line, where each domain
 is optionally followed by a slash (/) and a DNS resource record type to
@@ -67,9 +67,9 @@ The type defaults to \f[I]SOA\f[] if it is not specified.
 .RS
 .RE
 .TP
-.B -v
+.B \-v
 Verbose.
-Use with \f[I]-f\f[] for verbose output.
+Use with \f[I]\-f\f[] for verbose output.
 .RS
 .RE
 .PP
@@ -90,7 +90,7 @@ ibadancer.com
 wnagele.com/A
 b.aa/soa
 
-$\ nagval\ -v\ -f\ domains
+$\ nagval\ \-v\ \-f\ domains
 google.com/A:\ PINSECURE
 orange.kame.net/AAAA:\ PINSECURE
 ip.jpmens.org/A:\ SUCCESS
@@ -120,7 +120,16 @@ else OK.
 .SH CREDITS
 .IP \[bu] 2
 This program requires \f[I]dnsval\f[], a library provided by the
-DNSSEC-tools project <https://www.dnssec-tools.org/>
+DNSSEC\-tools project <https://www.dnssec-tools.org/>
+.SH INSTALLATION
+.IP \[bu] 2
+Obtain \f[C]dnsval\-2.1\f[] (or higher) from
+<http://www.dnssec-tools.org/download/>, extract and run the typical
+\f[C]\&./configure\ &&\ make\f[] thing.
+.IP \[bu] 2
+Adjust \f[C]LIBS\f[] in our \f[C]Makefile\f[] accordingly
+.IP \[bu] 2
+Run \f[C]make\f[]
 .SH SEE ALSO
 .IP \[bu] 2
 \f[C]resolver\f[](5).
@@ -134,6 +143,6 @@ DNSSEC-tools project <https://www.dnssec-tools.org/>
 <http://zonecheck.fr>
 .SH AUTHOR
 .PP
-Jan-Piet Mens <http://mens.de>
+Jan\-Piet Mens <http://mens.de>
 .SH AUTHORS
-Jan-Piet Mens.
+Jan\-Piet Mens.

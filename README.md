@@ -114,6 +114,15 @@ CREDITS
 -   This program requires *dnsval*, a library provided by the
     DNSSEC-tools project <https://www.dnssec-tools.org/>
 
+INSTALLATION
+============
+
+-   Obtain `dnsval-2.1` (or higher) from
+    <http://www.dnssec-tools.org/download/>, extract and run the typical
+    `./configure && make` thing.
+-   Adjust `LIBS` in our `Makefile` accordingly
+-   Run `make`
+
 SEE ALSO
 ========
 
@@ -127,3 +136,4 @@ AUTHOR
 ======
 
 Jan-Piet Mens <http://mens.de>
+
